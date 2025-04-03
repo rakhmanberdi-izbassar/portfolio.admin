@@ -1,7 +1,7 @@
 # PHP 8.0 CLI бейнесін негіз ретінде алыңыз
 FROM php:8.0-cli
 
-# Жүйені жаңарту және қажетті тәуелділіктерді орнату
+# Қажетті тәуелділіктерді орнату
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install gd pdo pdo_mysql zip
 
 # Composer орнату
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
 # Composer орнатылғанын тексеру
 RUN composer --version
@@ -29,8 +29,12 @@ COPY . .
 # Laravel үшін рұқсаттарды орнату
 RUN chmod -R 775 storage bootstrap/cache
 
+# `.env` файлын көшіріп, Laravel үшін конфигурация жасау
+RUN cp .env.example .env
+RUN php artisan key:generate
+
 # Composer тәуелділіктерін орнату (егжей-тегжейлі логтармен)
-RUN composer install --no-dev --optimize-autoloader -vvv
+RUN rm -rf vendor composer.lock && composer install --no-dev --optimize-autoloader -vvv
 
 # Laravel конфигурациясын кэштеу
 RUN php artisan config:cache
