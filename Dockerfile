@@ -11,8 +11,9 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libzip-dev \
+    libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql zip
+    && docker-php-ext-install gd pdo pdo_pgsql zip
 
 # Composer орнату
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
@@ -31,12 +32,12 @@ RUN chmod -R 775 storage bootstrap/cache
 
 # `.env` файлын көшіріп, Laravel үшін конфигурация жасау
 RUN cp .env.example .env
+
+# 📌 **Composer install (ЕҢ БАСТЫ ҚАДАМ)**
+RUN composer install --no-dev --optimize-autoloader -vvv
+
+# 📌 **Енді Laravel командаларын орындауға болады**
 RUN php artisan key:generate
-
-# Composer тәуелділіктерін орнату (егжей-тегжейлі логтармен)
-RUN rm -rf vendor composer.lock && composer install --no-dev --optimize-autoloader -vvv
-
-# Laravel конфигурациясын кэштеу
 RUN php artisan config:cache
 
 # Портты ашу
