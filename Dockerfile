@@ -1,5 +1,5 @@
 # PHP 8.0 CLI бейнесін негіз ретінде алыңыз
-FROM php:8.0-cli
+FROM php:8.2-cli
 
 # Қажетті тәуелділіктерді орнату
 RUN apt-get update && apt-get install -y \
