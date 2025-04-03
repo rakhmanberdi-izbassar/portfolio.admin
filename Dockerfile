@@ -1,4 +1,4 @@
-# PHP 8.0 CLI бейнесін негіз ретінде алыңыз
+# PHP 8.2 CLI бейнесін негіз ретінде алыңыз
 FROM php:8.2-cli
 
 # Қажетті тәуелділіктерді орнату
@@ -12,8 +12,9 @@ RUN apt-get update && apt-get install -y \
     curl \
     libzip-dev \
     libpq-dev \
+    libicu-dev \ 
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_pgsql zip
+    && docker-php-ext-install gd pdo pdo_pgsql zip intl  # 🛠 intl кеңейтімін қосу
 
 # Composer орнату
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
